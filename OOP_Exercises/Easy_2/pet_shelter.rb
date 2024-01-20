@@ -1,5 +1,5 @@
 class Pet
-  attr_reader :type, :name
+  attr_reader :name, :type
 
   def initialize(type, name)
     @type = type
@@ -12,76 +12,59 @@ class Pet
 end
 
 class Owner
-  attr_reader :name, :pets
+  attr_accessor :number_of_pets
+
+  attr_reader :name
 
   def initialize(name)
     @name = name
-    @pets = []
-  end
-
-  def number_of_pets
-    pets.size
+    @number_of_pets = 0
   end
 end
 
 class Shelter
-  attr_accessor :owner, :pet, :records, :kennel
-
   def initialize
-    @kennel = []
-    @records = Hash.new([])
-  end
-
-  def add_kennel(pet)
-    @kennel << pet
+    @records = {}
   end
 
   def adopt(owner, pet)
-    @records[owner] += [pet]
-    owner.pets << kennel.delete(pet)
-    #kennel.delete(pet)
-  end
-
-  def available
-    puts "Pets Still available for adoption"
-    kennel.each {|pet| puts pet}
+    records[owner] ||= []
+    records[owner] << pet
+    owner.number_of_pets += 1
   end
 
   def print_adoptions
-    @records.each do |key, value|
-      puts "#{key.name} has adopted"
-      value.each do |pet|
-        puts pet
-      end
+    records.each do |owner, pets|
+      puts "#{owner.name} has adopted the following pets:"
+      pets.each { |pet| puts pet }
       puts " "
     end
   end
+
+  private
+
+  attr_accessor :records
 end
 
-shelter = Shelter.new
-
-shelter.add_kennel(butterscotch = Pet.new('cat', 'Butterscotch'))
-shelter.add_kennel(pudding      = Pet.new('cat', 'Pudding'))
-shelter.add_kennel(darwin       = Pet.new('bearded dragon', 'Darwin'))
-shelter.add_kennel(kennedy      = Pet.new('dog', 'Kennedy'))
-shelter.add_kennel(sweetie      = Pet.new('parakeet', 'Sweetie Pie'))
-shelter.add_kennel(molly        = Pet.new('dog', 'Molly'))
-shelter.add_kennel(chester      = Pet.new('fish', 'Chester'))
+butterscotch = Pet.new('cat', 'Butterscotch')
+pudding      = Pet.new('cat', 'Pudding')
+darwin       = Pet.new('bearded dragon', 'Darwin')
+kennedy      = Pet.new('dog', 'Kennedy')
+sweetie      = Pet.new('parakeet', 'Sweetie Pie')
+molly        = Pet.new('dog', 'Molly')
+chester      = Pet.new('fish', 'Chester')
 
 phanson = Owner.new('P Hanson')
 bholmes = Owner.new('B Holmes')
 
-
+shelter = Shelter.new
 shelter.adopt(phanson, butterscotch)
-#shelter.adopt(phanson, pudding)
+shelter.adopt(phanson, pudding)
 shelter.adopt(phanson, darwin)
 shelter.adopt(bholmes, kennedy)
-#shelter.adopt(bholmes, sweetie)
+shelter.adopt(bholmes, sweetie)
 shelter.adopt(bholmes, molly)
 shelter.adopt(bholmes, chester)
 shelter.print_adoptions
 puts "#{phanson.name} has #{phanson.number_of_pets} adopted pets."
 puts "#{bholmes.name} has #{bholmes.number_of_pets} adopted pets."
-puts "__________"
-shelter.available
-p shelter.kennel[shelter.kennel.index(pudding)]
